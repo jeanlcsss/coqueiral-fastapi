@@ -2,9 +2,11 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
-RUN pip install poetry && poetry install --no-root
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-COPY coqueiral_fastapi/app /auth_service
+COPY coqueiral_fastapi/ ./coqueiral_fastapi
 
-CMD ["poetry", "run", "task", "run"]
+ENV PYTHONPATH=/app
+
+CMD ["uvicorn", "coqueiral_fastapi.app.auth_service.main:app", "--host", "0.0.0.0", "--port", "8000"]

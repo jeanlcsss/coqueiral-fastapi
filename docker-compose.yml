@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   postgres:
     image: postgres:15
@@ -19,7 +18,7 @@ services:
   auth_service:
     build:
       context: .
-      dockerfile: coqueiral_fastapi/auth_service/Dockerfile
+      dockerfile: coqueiral_fastapi/app/auth_service/Dockerfile
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: senha
@@ -30,6 +29,21 @@ services:
       - postgres
     ports:
       - "8000:8000"
+
+  product_service:
+    build:
+      context: .
+      dockerfile: coqueiral_fastapi/app/product_service/Dockerfile
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: senha
+      POSTGRES_SERVER: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: coqueiral_db
+    depends_on:
+      - postgres
+    ports:
+      - "8001:8001"
 
 volumes:
   postgres_data:
