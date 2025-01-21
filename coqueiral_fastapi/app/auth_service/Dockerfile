@@ -9,4 +9,4 @@ COPY coqueiral_fastapi/ ./coqueiral_fastapi
 
 ENV PYTHONPATH=/app
 
-CMD ["uvicorn", "coqueiral_fastapi.app.auth_service.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["bash", "-c", "python coqueiral_fastapi/app/auth_service/initial_data.py && uvicorn coqueiral_fastapi.app.auth_service.main:app --host 0.0.0.0 --port 8000"]
