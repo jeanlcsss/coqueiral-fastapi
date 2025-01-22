@@ -7,6 +7,7 @@ from coqueiral_fastapi.app.auth_service.core.security import get_usuario_atual
 from coqueiral_fastapi.app.auth_service.models.user import Usuario
 import redis
 from typing import List
+import json
 
 router = APIRouter()
 
@@ -14,7 +15,8 @@ redis_client = redis.StrictRedis(host='redis-10415.c13.us-east-1-3.ec2.redns.red
                                  username='default', password='7TSFmDoncBiHM4d19WLhX9CA8hksqF3T')
 
 def get_cached_user(usuario_atual: Usuario = Depends(get_usuario_atual)):
-    user_data = redis_client.get(f"user:{usuario_atual.id}")
+    user_data_json = redis_client.get(f"user:{usuario_atual.id}")
+    user_data = json.loads(user_data_json) if user_data_json else None
     if not user_data:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Usuário não encontrado no cache')
     return user_data

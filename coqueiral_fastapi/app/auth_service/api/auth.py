@@ -11,6 +11,8 @@ from coqueiral_fastapi.app.auth_service.schemas.user import CriarUsuario, LoginU
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 import redis
+import json
+from fastapi.security import OAuth2PasswordRequestForm
 
 router = APIRouter()
 
@@ -31,14 +33,15 @@ def registrar(usuario: CriarUsuario, db: Session = Depends(get_db)):
 
 
 @router.post('/login', response_model=Token)
-def login(usuario: LoginUsuario, db: Session = Depends(get_db)):
-    usuario_db = db.query(Usuario).filter(Usuario.email == usuario.email).first()
-    if not usuario_db:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Usuário não encontrado')
-    if not verifica_senha(usuario.senha, usuario_db.senha_hashed):
-        raise HTTPException(status_code=status.HTTP_401_BAD_REQUEST, detail='Senha incorreta')
+def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    usuario_db = db.query(Usuario).filter(Usuario.email == form_data.username).first()
+    if not usuario_db or not verifica_senha(form_data.password, usuario_db.senha_hashed):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credenciais inválidas",
+        )
     token_acesso = cria_token_acesso(data={'sub': usuario_db.email})
-    redis_client.set(f"user:{usuario_db.id}", usuario_db.json(), ex=3600)
+    redis_client.set(f"user:{usuario_db.id}", json.dumps(usuario_db.to_dict()), ex=3600)
     return {'access_token': token_acesso, 'token_type': 'bearer'}
 
 

@@ -13,3 +13,12 @@ class Usuario(Base):
     senha_hashed = Column(String, nullable=False)
     is_admin = Column(Boolean, default=False)
     criado_em = Column(DateTime, server_default=func.now())
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nome': self.nome,
+            'email': self.email,
+            'is_admin': self.is_admin,
+            'criado_em': self.criado_em.isoformat(),
+        }
