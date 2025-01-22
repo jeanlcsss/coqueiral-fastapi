@@ -25,19 +25,19 @@ def is_admin(usuario_atual: Usuario = Depends(get_usuario_atual)) -> bool:
     user_data = get_cached_user(usuario_atual)
     return user_data.get('is_admin', False) is True
 
-@router.get('/produtos', response_model=List[ProdutoResponse])
+@router.get('/', response_model=List[ProdutoResponse])
 def listar_produtos(db: Session = Depends(get_db)):
     produtos = db.query(Produto).all()
     return produtos
 
-@router.get('/produtos/{produto_id}', response_model=ProdutoResponse)
+@router.get('/{produto_id}', response_model=ProdutoResponse)
 def mostrar_produto(produto_id: int, db: Session = Depends(get_db)):
     produto = db.query(Produto).filter(Produto.id == produto_id).first()
     if not produto:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Produto não encontrado')
     return produto
 
-@router.post('/produtos', response_model=ProdutoResponse)
+@router.post('/', response_model=ProdutoResponse)
 def criar_produto(produto: CriarProduto, db: Session = Depends(get_db), admin: bool = Depends(is_admin)):
     if not admin:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Apenas administradores podem criar produtos')
@@ -47,7 +47,7 @@ def criar_produto(produto: CriarProduto, db: Session = Depends(get_db), admin: b
     db.refresh(novo_produto)
     return novo_produto
 
-@router.put('/produtos/{produto_id}', response_model=ProdutoResponse)
+@router.put('/{produto_id}', response_model=ProdutoResponse)
 def editar_produto(produto_id: int, produto: CriarProduto, db: Session = Depends(get_db), admin: bool = Depends(is_admin)):
     if not admin:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Apenas administradores podem editar produtos')
@@ -60,7 +60,7 @@ def editar_produto(produto_id: int, produto: CriarProduto, db: Session = Depends
     db.refresh(produto_db)
     return produto_db
 
-@router.delete('/produtos/{produto_id}', response_model=ProdutoResponse)
+@router.delete('/{produto_id}', response_model=ProdutoResponse)
 def deletar_produto(produto_id: int, db: Session = Depends(get_db), admin: bool = Depends(is_admin)):
     if not admin:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Apenas administradores podem deletar produtos')
