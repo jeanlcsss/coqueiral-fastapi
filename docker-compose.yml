@@ -45,5 +45,15 @@ services:
     ports:
       - "8001:8001"
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80" 
+    depends_on:
+      - auth_service
+      - product_service
+
 volumes:
   postgres_data:
