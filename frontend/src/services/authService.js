@@ -1,5 +1,7 @@
 import axios from "axios";
 
+axios.defaults.baseURL = process.env.REACT_APP_AUTH_SERVICE_URL;
+
 const authService = process.env.REACT_APP_AUTH_SERVICE_URL;
 
 export const login = async (email, senha) => {
@@ -7,21 +9,29 @@ export const login = async (email, senha) => {
   params.append("username", email);
   params.append("password", senha);
 
-  const response = await axios.post(`${authService}/login`, params, {
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-  });
+  try {
+    const response = await axios.post("/login", params, {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    });
 
-  return response.data; // Retorna o token
+    // Configura o token no localStorage e no Axios
+    localStorage.setItem("access_token", response.data.access_token);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${response.data.access_token}`;
+
+    return response.data; // Retorna o token
+  } catch (error) {
+    throw error.response.data; // Retorna o erro
+  }
 };
 
 // Função para registrar usuário
 export const registrar = async (nome, email, senha) => {
-  const response = await axios.post(`${authService}/registrar`, {
-    nome,
-    email,
-    senha,
-  });
-  return response.data; // Retorna o usuário criado
+  try {
+    const response = await axios.post("/registrar", { nome, email, senha });
+    return response.data; // Retorna o usuário criado
+  }  catch (error) {
+    throw error.response.data; // Retorna o erro
+  }
 };
