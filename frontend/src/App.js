@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Navigate } from "react-router-dom";
+import LandingPage from "./components/LandingPage";
 import Login from "./components/Login";
 import Registrar from "./components/Registrar";
 import Produtos from "./components/Produtos";
@@ -11,6 +12,7 @@ function App() {
     <Router>
       <Routes>
         {/* Rota pública */}
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registrar" element={<Registrar />} />
         {/* Rotas protegidas */}
@@ -24,7 +26,7 @@ function App() {
         />
 
         {/* Rota padrão */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
