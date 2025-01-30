@@ -35,3 +35,23 @@ export const registrar = async (nome, email, senha) => {
     throw error.response.data; // Retorna o erro
   }
 };
+
+export const get_usuario = async () => {
+  const token = localStorage.getItem("access_token");
+  
+  if (!token) {
+    throw new Error("Token não encontrado");
+  }
+
+  try {
+    const response = await axios.get(`${authService}/get_usuario`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    localStorage.removeItem("access_token");
+    throw error.response.data;
+  }
+};
