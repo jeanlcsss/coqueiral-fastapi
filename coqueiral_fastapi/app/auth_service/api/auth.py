@@ -40,7 +40,10 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Credenciais inválidas",
         )
-    token_acesso = cria_token_acesso(data={'sub': usuario_db.email})
+    token_acesso = cria_token_acesso(data={
+                                        'sub': usuario_db.email,
+                                        'is_admin': usuario_db.is_admin,
+                                        })
     redis_client.set(f"user:{usuario_db.id}", json.dumps(usuario_db.to_dict()), ex=3600)
     return {'access_token': token_acesso, 'token_type': 'bearer'}
 

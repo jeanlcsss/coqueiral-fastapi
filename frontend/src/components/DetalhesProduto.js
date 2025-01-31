@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getProduto, editarProduto, deletarProduto } from "../services/productService";
+import { getProduto, deletarProduto } from "../services/productService";
 import EditarProdutoModal from "./EditarProdutoModal"; // Componente modal
+import { isAdmin } from "../services/authService"; // Função para verificar admin
 
 const DetalhesProduto = () => {
   const { id } = useParams();
   const [produto, setProduto] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [usuarioAdmin, setUsuarioAdmin] = useState(false);
 
   useEffect(() => {
     const carregarProduto = async () => {
       try {
         const produtoData = await getProduto(id);
         setProduto(produtoData);
-        
-        // Verificar admin
-        const userData = JSON.parse(localStorage.getItem("user"));
-        setIsAdmin(userData?.is_admin || false);
+
+        // Verifica se o usuário é admin
+        setUsuarioAdmin(isAdmin());
       } catch (error) {
         console.error("Erro ao carregar produto:", error);
       }
@@ -41,7 +41,7 @@ const DetalhesProduto = () => {
       <p>Descrição: {produto.descricao}</p>
       <p>Estoque: {produto.estoque}</p>
 
-      {isAdmin && (
+      {usuarioAdmin && (
         <div className="admin-actions">
           <button onClick={() => setShowEditModal(true)}>Editar</button>
           <button onClick={handleDelete} className="btn-danger">Excluir</button>
