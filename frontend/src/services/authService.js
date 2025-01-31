@@ -51,7 +51,9 @@ export const get_usuario = async () => {
     });
     return response.data;
   } catch (error) {
-    localStorage.removeItem("access_token");
-    throw error.response.data;
+    if (error.response?.status === 401) {
+      localStorage.removeItem("access_token");
+    }
+    throw error;
   }
 };

@@ -1,29 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Navigate } from "react-router-dom";
-import { get_usuario } from "../services/authService"; // Importa a função para validar o token
 
 const ProtectedRoute = ({ children }) => {
-  const [isValid, setIsValid] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const token = localStorage.getItem("access_token");
 
-  useEffect(() => {
-    const validateToken = async () => {
-      try {
-        await get_usuario(); // Chama um endpoint protegido para validar o token
-        setIsValid(true);
-      } catch (error) {
-        localStorage.removeItem("access_token");
-        setIsValid(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  // Redireciona para o login se o token não existir
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
 
-    validateToken();
-  }, []);
-
-  if (isLoading) return <div>Carregando...</div>;
-  return isValid ? children : <Navigate to="/login" replace />;
+  // Renderiza o conteúdo protegido
+  return children;
 };
 
 export default ProtectedRoute;

@@ -4,8 +4,9 @@ import { Navigate } from "react-router-dom";
 import LandingPage from "./components/LandingPage";
 import Login from "./components/Login";
 import Registrar from "./components/Registrar";
-import Produtos from "./components/Produtos";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CatalogoProdutos from "./components/CatalogoProdutos";
+import DetalhesProduto from "./components/DetalhesProduto";
 
 function App() {
   return (
@@ -20,10 +21,19 @@ function App() {
           path="/produtos"
           element={
             <ProtectedRoute>
-              <Produtos />
+              <CatalogoProdutos /> {/* Página principal de produtos */}
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/produtos/:id"
+          element={
+            <ProtectedRoute>
+              <DetalhesProduto /> {/* Detalhes de um produto específico */}
+            </ProtectedRoute>
+          }
+        />
+
 
         {/* Rota padrão */}
         <Route path="*" element={<Navigate to="/" replace />} />
