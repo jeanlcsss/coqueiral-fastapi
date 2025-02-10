@@ -45,6 +45,20 @@ services:
     ports:
       - "8001:8001"
 
+  order_service:
+    build:
+      dockerfile: coqueiral_fastapi/app/order_service/Dockerfile
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: senha
+      POSTGRES_SERVER: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: coqueiral_db
+    depends_on:
+      - postgres
+    ports:
+      - "8002:8002"
+
   frontend:
     build:
       context: ./frontend
