@@ -23,7 +23,7 @@ def get_usuario_atual(request: Request):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Falha na autenticação com auth_service")
 
 @router.get("/carrinho", response_model=PedidoResponse)
-def obter_carrinho(db: Session = Depends(get_db), usuario=Depends(get_usuario_atual)):
+def obter_carrinho(request: Request, db: Session = Depends(get_db), usuario=Depends(get_usuario_atual)):
     usuario_id = usuario["id"]  # Obtém ID do usuário autenticado
 
     carrinho = db.query(Pedido).filter(Pedido.usuario_id == usuario_id, Pedido.status == StatusPedidoEnum.CARRINHO).first()
@@ -36,7 +36,8 @@ def obter_carrinho(db: Session = Depends(get_db), usuario=Depends(get_usuario_at
     return carrinho
 
 @router.post("/carrinho", response_model=PedidoResponse)
-def adicionar_ao_carrinho(item: PedidoItemCreate, db: Session = Depends(get_db), usuario_id: int = Depends(get_usuario_atual)):
+def adicionar_ao_carrinho(item: PedidoItemCreate, request: Request, db: Session = Depends(get_db), usuario=Depends(get_usuario_atual)):
+    usuario_id = usuario["id"]
     carrinho = db.query(Pedido).filter(Pedido.usuario_id == usuario_id, Pedido.status == StatusPedidoEnum.CARRINHO).first()
 
     if not carrinho:
@@ -56,8 +57,9 @@ def adicionar_ao_carrinho(item: PedidoItemCreate, db: Session = Depends(get_db),
     return carrinho
 
 @router.delete("/carrinho/{item_id}")
-def remover_do_carrinho(item_id: int, db: Session = Depends(get_db), usuario_id: int = Depends(get_usuario_atual)):
-    item = db.query(PedidoItem).filter(PedidoItem.id == item_id).first()
+def remover_do_carrinho(item_id: int, request: Request, db: Session = Depends(get_db), usuario = Depends(get_usuario_atual)):
+    usuario_id = usuario["id"]
+    item = db.query(PedidoItem).filter(PedidoItem.id == item_id, PedidoItem.pedido.has(usuario_id=usuario_id)).first()
 
     if not item:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item não encontrado")
@@ -67,7 +69,8 @@ def remover_do_carrinho(item_id: int, db: Session = Depends(get_db), usuario_id:
     return {"message": "Item removido do carrinho"}
 
 @router.post("/carrinho/finalizar")
-def finalizar_pedido(db: Session = Depends(get_db), usuario_id: int = Depends(get_usuario_atual)):
+def finalizar_pedido(request: Request, db: Session = Depends(get_db), usuario = Depends(get_usuario_atual)):
+    usuario_id = usuario["id"]
     carrinho = db.query(Pedido).filter(Pedido.usuario_id == usuario_id, Pedido.status == StatusPedidoEnum.CARRINHO).first()
 
     if not carrinho:
@@ -78,7 +81,8 @@ def finalizar_pedido(db: Session = Depends(get_db), usuario_id: int = Depends(ge
     return {"message": "Pedido finalizado! Aguarde pagamento."}
 
 @router.post("/carrinho/cancelar")
-def cancelar_pedido(db: Session = Depends(get_db), usuario_id: int = Depends(get_usuario_atual)):
+def cancelar_pedido(request: Request, db: Session = Depends(get_db), usuario = Depends(get_usuario_atual)):
+    usuario_id = usuario["id"]
     carrinho = db.query(Pedido).filter(Pedido.usuario_id == usuario_id, Pedido.status == StatusPedidoEnum.CARRINHO).first()
 
     if not carrinho:

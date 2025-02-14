@@ -7,6 +7,7 @@ import Registrar from "./components/Registrar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CatalogoProdutos from "./components/CatalogoProdutos";
 import DetalhesProduto from "./components/DetalhesProduto";
+import Carrinho from "./components/Carrinho";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registrar" element={<Registrar />} />
+        <Route path="/carrinho" element={<Carrinho />} />
         {/* Rotas protegidas */}
         <Route
           path="/produtos"
