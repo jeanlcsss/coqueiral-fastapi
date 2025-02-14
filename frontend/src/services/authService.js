@@ -72,6 +72,7 @@ export const isAdmin = () => {
   try {
     // Decodifica o payload do JWT
     const payload = JSON.parse(atob(token.split(".")[1]));
+    console.log("Payload do token:", payload);
     return payload.is_admin === true;
   } catch (error) {
     console.error("Erro ao verificar admin:", error);

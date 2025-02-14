@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { listarProdutos } from "../services/productService";
 import { Link } from "react-router-dom";
 import CriarProdutoModal from "./CriarProdutoModal"; // Componente modal
+import { isAdmin } from "../services/authService";
 
 const CatalogoProdutos = () => {
   const [produtos, setProdutos] = useState([]);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [usuarioAdmin, setUsuarioAdmin] = useState(false);
 
   useEffect(() => {
     const carregarDados = async () => {
@@ -14,11 +15,10 @@ const CatalogoProdutos = () => {
         const produtosData = await listarProdutos();
         setProdutos(produtosData);
         
-        // Verificar se é admin
-        const userData = JSON.parse(localStorage.getItem("user"));
-        setIsAdmin(userData?.is_admin || false);
+        const adminStatus = isAdmin();
+        setUsuarioAdmin(adminStatus);
       } catch (error) {
-        console.error("Erro ao carregar produtos:", error);
+        console.error("Erro ao buscar produtos:", error);
       }
     };
     carregarDados();
@@ -28,7 +28,7 @@ const CatalogoProdutos = () => {
     <div className="catalogo">
       <h1>Catálogo de Produtos</h1>
       
-      {isAdmin && (
+      {usuarioAdmin && (
         <button onClick={() => setShowModal(true)} className="btn-admin">
           Adicionar Novo Produto
         </button>

@@ -25,10 +25,12 @@ def verifica_senha(senha: str, senha_hashed: str) -> bool:
     return pwd_context.verify(senha, senha_hashed)
 
 
-def cria_token_acesso(data: dict, expires_delta: timedelta = None) -> str:
-    to_encode = data.copy()
-    expira = datetime.now() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
-    to_encode.update({'exp': expira})
+def cria_token_acesso(usuario: Usuario, expires_delta: timedelta = None) -> str:
+    to_encode = {
+        "sub": usuario.email,
+        "exp": datetime.now() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)),
+        "is_admin": usuario.is_admin,
+    }
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
