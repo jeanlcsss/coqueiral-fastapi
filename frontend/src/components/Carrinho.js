@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { obterCarrinho, removerDoCarrinho, finalizarPedido } from "../services/cartService";
+import { obterCarrinho, removerDoCarrinho, processarPagamento } from "../services/cartService";
 
 const Carrinho = () => {
   const [carrinho, setCarrinho] = useState(null);
@@ -31,11 +31,11 @@ const Carrinho = () => {
 
   const handleFinalizarCompra = async () => {
     try {
-      await finalizarPedido();
+      await processarPagamento();
       alert("Compra finalizada com sucesso!");
       setCarrinho(null); // Zera o carrinho após finalizar
     } catch (error) {
-      console.error("Erro ao finalizar compra:", error);
+      alert("Erro ao finalizar compra. Tente novamente.");
     }
   };
 

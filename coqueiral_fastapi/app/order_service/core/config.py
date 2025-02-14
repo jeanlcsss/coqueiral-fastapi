@@ -32,3 +32,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
+# Configuração do Stripe
+
+STRIPE_SECRET_KEY = os.getenv("STRIP_SECRET_KEY", "sk_test_51QsEgBRlijYq1GvYeOYCdmVClzqQ1ebEUx7PJn40WytcUsnl6E1RuhiKB5R6uifZHbni050ULdBhAkn4YX10suVx00uMOe3RH3")

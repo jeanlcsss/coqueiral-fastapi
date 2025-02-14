@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const ORDER_SERVICE_URL = process.env.REACT_APP_ORDER_SERVICE_URL || "http://localhost:8002/pedidos";
+const PAYMENT_SERVICE_URL = process.env.REACT_APP_PAYMENT_SERVICE_URL || "http://localhost:8002/pagamento";
 
 // Adiciona um produto ao carrinho
 export const adicionarAoCarrinho = async (produtoId, quantidade, precoUnitario) => {
@@ -95,3 +96,19 @@ export const cancelarPedido = async () => {
     throw error;
   }
 };
+
+export const processarPagamento = async () => {
+    const token = localStorage.getItem("access_token");
+  
+    try {
+      const response = await axios.post(
+        `${PAYMENT_SERVICE_URL}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log("Checkout URL:", response.data.checkout_url);
+      window.location.href = response.data.checkout_url;
+    } catch (error) {
+      console.error("Erro ao iniciar pagamento:", error);
+    }
+  };

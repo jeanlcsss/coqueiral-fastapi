@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from coqueiral_fastapi.app.order_service.api.order import router as pedido_router
+from coqueiral_fastapi.app.order_service.api.payment import router as pagamento_router 
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Order Service")
@@ -13,6 +14,7 @@ app.add_middleware(
 )
 
 app.include_router(pedido_router, prefix="/pedidos", tags=["Pedidos"])
+app.include_router(pagamento_router, prefix="/pagamento", tags=["Pagamentos"])
 
 @app.get("/")
 def root():
