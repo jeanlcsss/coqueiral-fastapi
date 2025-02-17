@@ -3,11 +3,13 @@ import { listarProdutos } from "../services/productService";
 import { Link } from "react-router-dom";
 import CriarProdutoModal from "./CriarProdutoModal"; // Componente modal
 import { isAdmin } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
 const CatalogoProdutos = () => {
   const [produtos, setProdutos] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [usuarioAdmin, setUsuarioAdmin] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const carregarDados = async () => {
@@ -44,6 +46,10 @@ const CatalogoProdutos = () => {
           </div>
         ))}
       </div>
+
+      <button onClick={() => navigate("/carrinho")} className="btn-carrinho">
+        Ver Carrinho
+      </button>
 
       {showModal && (
         <CriarProdutoModal

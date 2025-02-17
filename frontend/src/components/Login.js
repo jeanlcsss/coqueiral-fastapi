@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { login } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -11,6 +13,7 @@ const Login = () => {
       const data = await login(email, senha); // Chamada ao serviço de login
       localStorage.setItem("access_token", data.access_token); // Armazena o token
       alert("Login realizado com sucesso!");
+      navigate("/produtos"); // Redireciona para a página de produtos
     } catch (error) {
       console.error("Erro ao fazer login:", error.message);
       alert("Erro ao autenticar.");

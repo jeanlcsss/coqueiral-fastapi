@@ -30,7 +30,7 @@ export const login = async (email, senha) => {
 // Função para registrar usuário
 export const registrar = async (nome, email, senha) => {
   try {
-    const response = await axios.post(`${authService}/registrar`, { nome, email, senha });
+    const response = await axios.post("/registrar", { nome, email, senha });
     return response.data;
   } catch (error) {
     console.error("Erro ao registrar usuário:", error.response?.data || error.message);
